@@ -1,0 +1,94 @@
+diff -urN ltp-full-20050707-dist/testcases/kernel/syscalls/fmtmsg/Makefile ltp-full-20050707/testcases/kernel/syscalls/fmtmsg/Makefile
+--- ltp-full-20050707-dist/testcases/kernel/syscalls/fmtmsg/Makefile	2005-07-11 16:28:18.000000000 -0600
++++ ltp-full-20050707/testcases/kernel/syscalls/fmtmsg/Makefile	2005-08-02 19:56:11.000000000 -0600
+@@ -26,7 +26,7 @@
+ LOADLIBES+=	$(if $(UCLINUX),-lc)
+ 
+ SRCS=$(wildcard *.c)
+-TARGETS=$(patsubst %.c,%,$(SRCS))
++TARGETS=#$(patsubst %.c,%,$(SRCS))
+ 
+ all: $(TARGETS)
+ 
+diff -urN ltp-full-20050707-dist/testcases/kernel/syscalls/getcontext01/Makefile ltp-full-20050707/testcases/kernel/syscalls/getcontext01/Makefile
+--- ltp-full-20050707-dist/testcases/kernel/syscalls/getcontext01/Makefile	2005-05-26 14:38:47.000000000 -0600
++++ ltp-full-20050707/testcases/kernel/syscalls/getcontext01/Makefile	2005-08-02 19:56:11.000000000 -0600
+@@ -24,7 +24,7 @@
+ LOADLIBES+=	-L../../../../lib -lltp
+ 
+ SRCS=$(wildcard *.c)
+-TARGETS=$(patsubst %.c,%,$(SRCS))
++TARGETS=#$(patsubst %.c,%,$(SRCS))
+ 
+ all: $(TARGETS)
+ 
+diff -urN ltp-full-20050707-dist/testcases/kernel/syscalls/profil/Makefile ltp-full-20050707/testcases/kernel/syscalls/profil/Makefile
+--- ltp-full-20050707-dist/testcases/kernel/syscalls/profil/Makefile	2005-07-11 16:28:53.000000000 -0600
++++ ltp-full-20050707/testcases/kernel/syscalls/profil/Makefile	2005-08-02 19:56:11.000000000 -0600
+@@ -25,7 +25,7 @@
+ LOADLIBES+=	$(if $(UCLINUX),-lc)
+ 
+ SRCS=$(wildcard *.c)
+-TARGETS=$(patsubst %.c,%,$(SRCS))
++TARGETS=#$(patsubst %.c,%,$(SRCS))
+ 
+ all: $(TARGETS)
+ 
+diff -urN ltp-full-20050707-dist/testcases/kernel/syscalls/pselect/Makefile ltp-full-20050707/testcases/kernel/syscalls/pselect/Makefile
+--- ltp-full-20050707-dist/testcases/kernel/syscalls/pselect/Makefile	2005-05-26 09:35:58.000000000 -0600
++++ ltp-full-20050707/testcases/kernel/syscalls/pselect/Makefile	2005-08-02 19:56:11.000000000 -0600
+@@ -24,7 +24,7 @@
+ LOADLIBES+=	-L../../../../lib -lltp
+ 
+ SRCS=$(wildcard *.c)
+-TARGETS=$(patsubst %.c,%,$(SRCS))
++TARGETS=#$(patsubst %.c,%,$(SRCS))
+ 
+ all: $(TARGETS)
+ 
+diff -urN ltp-full-20050707-dist/testcases/kernel/syscalls/swapon/swapon02.c ltp-full-20050707/testcases/kernel/syscalls/swapon/swapon02.c
+--- ltp-full-20050707-dist/testcases/kernel/syscalls/swapon/swapon02.c	2005-07-11 16:29:08.000000000 -0600
++++ ltp-full-20050707/testcases/kernel/syscalls/swapon/swapon02.c	2005-08-02 19:56:38.000000000 -0600
+@@ -86,9 +86,7 @@
+ #include <sys/stat.h>
+ #include <sys/swap.h>
+ #include <asm/page.h>
+-#ifdef OLDER_DISTRO_RELEASE
+-#include <linux/swap.h>
+-#endif
++#define MAX_SWAPFILES 32 
+ #include <fcntl.h>
+ #include <pwd.h>
+ #include <string.h>
+@@ -97,10 +95,6 @@
+ #include "test.h"
+ #include "usctest.h"
+ 
+-#ifndef OLDER_DISTRO_RELEASE
+-#define MAX_SWAPFILES 32 
+-#endif
+-
+ static void setup();
+ static void cleanup();
+ static int setup01();
+--- ltp-full-20050707/testcases/kernel/fs/acls/acl_file_test.c.orig	2005-08-09 01:41:25.000000000 -0600
++++ ltp-full-20050707/testcases/kernel/fs/acls/acl_file_test.c	2005-08-09 01:42:29.000000000 -0600
+@@ -52,12 +52,18 @@
+ 	}
+ 
+ 	//s = syscall(237, fd,tok); //fremovexattr
++#ifdef __NR_fremovexattr
+         s = syscall(__NR_fremovexattr, fd,tok); //fremovexattr
+ 	if (s == -1) {
+                 printf ("User unable to remove extended attributes file %s !\n", argv[1]);
+                 printf("errno = %i\n", errno);
+                 rc = 1;
+         }
++#else
++	printf ("User unable to remove extended attributes file %s !\n", argv[1]);
++	printf("errno = %i\n", ENOSYS);
++	rc = 1;
++#endif
+ 	
+ 	close (fd);	
+ 	return  rc;		

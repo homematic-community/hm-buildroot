@@ -1,0 +1,37 @@
+# Choose uClibc options
+#
+
+comment "uClibc Options"
+
+config BR2_UCLIBC_VERSION_SNAPSHOT
+	bool "Use a daily snapshot of uClibc?"
+	default y
+	help
+ 	    Would you like to use a daily snapshot?
+
+config BR2_USE_UCLIBC_SNAPSHOT
+	string "Date (yyyymmdd) of snapshot or 'snapshot' for latest"
+	default "snapshot"
+	depends on BR2_UCLIBC_VERSION_SNAPSHOT
+	help
+	    Use latest snapshot or one from a specific date?
+
+config BR2_ENABLE_LOCALE
+	bool "Enable locale/gettext/i18n support?"
+	default n
+	help
+	    Enable locale/gettext/i18n support?
+
+config BR2_PTHREADS
+	bool "Enable thread support"
+	default y
+	help
+	    Enable support for libpthreads
+
+config BR2_PTHREADS_NATIVE
+	bool "Enable Native POSIX Threading (NPTL) support?"
+	default n
+	depends on BR2_PTHREADS
+	help
+	    Enable Native POSIX Threading (NPTL) support?
+
